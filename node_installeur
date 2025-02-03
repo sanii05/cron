@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Farben für die Ausgabe
+GREEN="\e[32m"
+RED="\e[31m"
+NC="\e[0m"
+
+echo -e "${GREEN}Starte die Installation von Node.js...${NC}"
+
+# Prüfe das Betriebssystem
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    if command -v apt >/dev/null 2>&1; then
+        echo -e "${GREEN}Debian/Ubuntu erkannt. Installiere Abhängigkeiten...${NC}"
+        sudo apt update && sudo apt install -y curl
+    elif command -v pacman >/dev/null 2>&1; then
+        echo -e "${GREEN}Arch Linux erkannt. Installiere Abhängigkeiten...${NC}"
+        sudo pacman -Sy --noconfirm curl
+    else
+        echo -e "${RED}Nicht unterstützte Linux-Distribution.${NC}"
+        exit 1
+    fi
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+    echo -e "${GREEN}macOS erkannt. Installiere Abhängigkeiten...${NC}"
+    if ! command -v brew >/dev/null 2>&1; then
+        echo -e "${RED}Homebrew nicht gefunden! Installiere es zuerst.${NC}"
+        exit 1
+    fi
+else
+    echo -e "${RED}Nicht unterstütztes Betriebssystem.${NC}"
+    exit 1
+fi
+
+# Installiere NVM (Node Version Manager)
+echo -e "${GREEN}Installiere NVM...${NC}"
+curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+
+# Lade NVM in die aktuelle Sitzung
+export NVM_DIR="$HOME/.nvm"
+source "$NVM_DIR/nvm.sh"
+
+# Installiere die neueste LTS-Version von Node.js
+echo -e "${GREEN}Installiere die neueste LTS-Version von Node.js...${NC}"
+nvm install --lts
+
+# Überprüfe die Installation
+echo -e "${GREEN}Node.js Version:${NC} $(node -v)"
+echo -e "${GREEN}npm Version:${NC} $(npm -v)"
+
+echo -e "${GREEN}Installation abgeschlossen!${NC}"
