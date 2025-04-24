@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Update & Tools installieren
+sudo apt update && sudo apt upgrade -y
+sudo apt install curl git build-essential pkg-config libssl-dev -y
+
+# Rust installieren (für Cysic)
+curl https://sh.rustup.rs -sSf | sh -s -- -y
+source $HOME/.cargo/env
+
+# Repository klonen (Beispiel, URL ggf. anpassen)
+git clone https://github.com/Cysic-ZK/cysic-node.git
+cd cysic-node
+
+# Build
+cargo build --release
+
+# Node starten (Beispiel)
+./target/release/cysic-node --network testnet
